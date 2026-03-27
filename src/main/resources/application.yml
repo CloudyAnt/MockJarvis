@@ -1,0 +1,16 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: mock-jarvis
+  ai:
+    dashscope:
+      api-key: ${DASHSCOPE_API_KEY:}
+
+weather:
+  qweather:
+    api-host: ${QWEATHER_API_HOST:}
+    project-id: ${QWEATHER_PROJECT_ID:}
+    credential-id: ${QWEATHER_CREDENTIAL_ID:}
+    ed25519-private-path: ${QWEATHER_ED25519_PRIVATE_PATH:}

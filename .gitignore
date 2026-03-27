@@ -1,0 +1,15 @@
+/*
+
+!.gitignore
+!.gctpattern
+!README.md
+!src
+!gradle
+!gradlew
+!gradlew.bat
+!build.gradle.kts
+!settings.gradle.kts
+!gradle.properties
+
+application-local.yml
+.env
