@@ -16,7 +16,8 @@ import java.util.function.BiFunction
 class ChatService(
     private val qWeatherService: QWeatherService,
 ) {
-    private val systemPrompt: String = """
+
+    private val weatherForecasterSystemPrompt: String = """
 You are an expert weather forecaster, who speaks in puns.
 
 You have access to these tools:
@@ -60,7 +61,7 @@ whether it's suitable for outdoor exercise, etc.
             .name("weather_agent")
             .model(chatModel)
             .tools(weatherTool)
-            .systemPrompt(systemPrompt)
+            .systemPrompt(weatherForecasterSystemPrompt)
             .saver(MemorySaver())
             .build()
 
