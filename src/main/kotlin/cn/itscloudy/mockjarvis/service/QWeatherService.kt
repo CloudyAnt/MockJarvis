@@ -23,10 +23,10 @@ import java.util.Base64
 @Service
 class QWeatherService(
     private val webClientBuilder: WebClient.Builder,
-    @param:Value("\${weather.qweather.api-host:}") private val apiHost: String,
-    @param:Value("\${weather.qweather.project-id:}") private val projectId: String,
-    @param:Value("\${weather.qweather.credential-id:}") private val credentialId: String,
-    @param:Value("\${weather.qweather.ed25519-private-path:}") private val ed25519PrivatePath: String,
+    @param:Value($$"${weather.qweather.api-host:}") private val apiHost: String,
+    @param:Value($$"${weather.qweather.project-id:}") private val projectId: String,
+    @param:Value($$"${weather.qweather.credential-id:}") private val credentialId: String,
+    @param:Value($$"${weather.qweather.ed25519-private-path:}") private val ed25519PrivatePath: String,
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
     private val objectMapper = jacksonObjectMapper()

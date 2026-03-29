@@ -5,12 +5,11 @@ import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatModel
 import com.alibaba.cloud.ai.graph.agent.ReactAgent
 import com.alibaba.cloud.ai.graph.checkpoint.savers.MemorySaver
 import org.springframework.ai.chat.model.ChatModel
-import org.springframework.ai.chat.model.ToolContext
-import org.springframework.ai.tool.ToolCallback
-import org.springframework.ai.tool.function.FunctionToolCallback
+import org.springframework.ai.tool.annotation.Tool
+import org.springframework.ai.tool.annotation.ToolParam
+import org.springframework.ai.support.ToolCallbacks
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import java.util.function.BiFunction
 
 @Service
 class ChatService(
@@ -29,8 +28,21 @@ Besides the weather, you can also provide some suggestions on what to wear, whet
 whether it's suitable for outdoor exercise, etc.
 """
 
-    @Value("\${spring.ai.dashscope.api-key}")
+    @Value($$"${spring.ai.dashscope.api-key}")
     lateinit var dashScopeApiKey: String
+
+    @Tool(
+        name = "get_city_current_weather",
+        description = "Get weather for a given city",
+    )
+    fun getCityCurrentWeather(
+        @ToolParam(description = "The city name to query weather for") city: String?,
+    ): String {
+        if (city.isNullOrBlank()) {
+            return "Cannot get current weather because the city is blank."
+        }
+        return qWeatherService.getCurrentWeather(city)
+    }
 
     fun queryWeather(city: String): String {
         val dashScopeApi = DashScopeApi.builder()
@@ -41,26 +53,10 @@ whether it's suitable for outdoor exercise, etc.
             .dashScopeApi(dashScopeApi)
             .build()
 
-
-        class WeatherTool : BiFunction<String?, ToolContext?, String?> {
-            override fun apply(city: String?, toolContext: ToolContext?): String {
-                if (city.isNullOrBlank()) {
-                    return "Cannot get current weather because the city is blank."
-                }
-                return qWeatherService.getCurrentWeather(city)
-            }
-        }
-
-        val weatherTool: ToolCallback = FunctionToolCallback.builder("get_weather", WeatherTool())
-            .description("Get weather for a given city")
-            .inputType(String::class.java)
-            .build()
-
-
         val agent = ReactAgent.builder()
             .name("weather_agent")
             .model(chatModel)
-            .tools(weatherTool)
+            .tools(*ToolCallbacks.from(this))
             .systemPrompt(weatherForecasterSystemPrompt)
             .saver(MemorySaver())
             .build()
